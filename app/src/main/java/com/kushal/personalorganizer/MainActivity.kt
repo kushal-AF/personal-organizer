@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PersonalOrganizerTheme {
-                com.kushal.personalorganizer.navigation.MainNavigation()
+                com.kushal.personalorganizer.navigation.AppRoot()
             }
         }
     }
