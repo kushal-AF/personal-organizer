@@ -7,9 +7,7 @@ plugins {
 
 android {
     namespace = "com.kushal.personalorganizer"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.kushal.personalorganizer"
@@ -43,10 +41,18 @@ kotlin {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.kotlin:kotlin-stdlib:2.2.10")
+    }
+}
+
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
@@ -75,4 +81,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+ksp {
+    arg("room.generateKotlin", "true")
 }
