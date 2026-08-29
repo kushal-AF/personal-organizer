@@ -1,6 +1,5 @@
 package com.kushal.personalorganizer.feature.tasks
 
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -22,16 +22,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kushal.personalorganizer.data.local.entity.TaskEntity
 import com.kushal.personalorganizer.ui.theme.AccentTasks
+import com.kushal.personalorganizer.ui.theme.AppBackground
 import com.kushal.personalorganizer.ui.theme.CardBackground
+import com.kushal.personalorganizer.ui.theme.TextPrimary
 import com.kushal.personalorganizer.ui.theme.TextSecondary
 
 private enum class TaskFilter { ALL, PENDING, COMPLETED }
 
 @Composable
 fun TasksScreen(
+    onBack: () -> Unit,
     viewModel: TasksViewModel = hiltViewModel()
 ) {
     val tasks by viewModel.tasks.collectAsState()
@@ -44,8 +48,10 @@ fun TasksScreen(
         TaskFilter.PENDING -> tasks.filter { !it.isCompleted }
         TaskFilter.COMPLETED -> tasks.filter { it.isCompleted }
     }
+    val completedCount = tasks.count { it.isCompleted }
 
     Scaffold(
+        containerColor = AppBackground,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
@@ -58,29 +64,48 @@ fun TasksScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(AppBackground)
                 .padding(padding)
                 .padding(horizontal = 20.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Daily Tasks",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onBack) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Column {
+                    Text(
+                        text = "Daily Tasks",
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
+                    )
+                    Text(
+                        text = "$completedCount of ${tasks.size} done",
+                        fontSize = 13.sp,
+                        color = TextSecondary
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            SegmentedTabs(
-                selected = filter,
-                onSelect = { filter = it }
-            )
+            SegmentedTabs(selected = filter, onSelect = { filter = it })
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
+            if (filteredTasks.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(top = 60.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No tasks yet — tap + to add one", color = TextSecondary)
+                }
+            }
+
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(filteredTasks) { task ->
                     TaskCard(
                         task = task,

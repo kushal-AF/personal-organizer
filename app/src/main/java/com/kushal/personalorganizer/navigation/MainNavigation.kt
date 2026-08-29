@@ -79,8 +79,8 @@ fun MainNavigation() {
             startDestination = NavRoutes.Dashboard.route,
             modifier = androidx.compose.ui.Modifier.padding(padding)
         ) {
-            composable(NavRoutes.Dashboard.route) { DashboardScreen() }
-            composable(NavRoutes.Tasks.route) { TasksScreen() }
+            composable(NavRoutes.Dashboard.route) { DashboardScreen(navController = navController) }
+            composable(NavRoutes.Tasks.route) { TasksScreen(onBack = { navController.popBackStack() }) }
             composable(NavRoutes.Calendar.route) { CalendarScreen() }
             composable(NavRoutes.Stats.route) { StatsScreen() }
             composable(NavRoutes.More.route) { MoreScreen() }

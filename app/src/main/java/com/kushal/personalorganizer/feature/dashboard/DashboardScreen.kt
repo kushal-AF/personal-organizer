@@ -1,5 +1,7 @@
 package com.kushal.personalorganizer.feature.dashboard
 
+import androidx.navigation.NavController
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -35,6 +37,7 @@ private data class DashboardItem(
 
 @Composable
 fun DashboardScreen(
+    navController: NavController,
     tasksViewModel: TasksViewModel = hiltViewModel(),
     appViewModel: com.kushal.personalorganizer.navigation.AppViewModel = hiltViewModel()
 ) {
@@ -95,7 +98,15 @@ fun DashboardScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(items.size) { index ->
-                DashboardCard(items[index])
+                val item = items[index]
+                DashboardCard(
+                    item = item,
+                    onClick = {
+                        if (item.title == "Tasks") {
+                            navController.navigate(com.kushal.personalorganizer.navigation.NavRoutes.Tasks.route)
+                        }
+                    }
+                )
             }
         }
 
@@ -104,12 +115,13 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun DashboardCard(item: DashboardItem) {
+private fun DashboardCard(item: DashboardItem, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(18.dp))
             .background(CardBackground)
+            .clickable { onClick() }
             .padding(16.dp)
     ) {
         Row(
