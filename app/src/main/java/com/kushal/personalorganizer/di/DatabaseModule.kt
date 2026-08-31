@@ -3,6 +3,7 @@ package com.kushal.personalorganizer.di
 import android.content.Context
 import androidx.room.Room
 import com.kushal.personalorganizer.data.local.AppDatabase
+import com.kushal.personalorganizer.data.local.dao.ClassWorkDao
 import com.kushal.personalorganizer.data.local.dao.TaskDao
 import dagger.Module
 import dagger.Provides
@@ -22,11 +23,14 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "personal_organizer_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     @Provides
-    fun provideTaskDao(database: AppDatabase): TaskDao {
-        return database.taskDao()
-    }
+    fun provideTaskDao(database: AppDatabase): TaskDao = database.taskDao()
+
+    @Provides
+    fun provideClassWorkDao(database: AppDatabase): ClassWorkDao = database.classWorkDao()
 }

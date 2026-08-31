@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,17 +38,23 @@ private data class DashboardItem(
 fun DashboardScreen(
     navController: NavController,
     tasksViewModel: TasksViewModel = hiltViewModel(),
+    classWorkViewModel: com.kushal.personalorganizer.feature.classeswork.ClassWorkViewModel = hiltViewModel(),
     appViewModel: com.kushal.personalorganizer.navigation.AppViewModel = hiltViewModel()
 ) {
     val uiState by appViewModel.uiState.collectAsState()
     val userName = (uiState as? com.kushal.personalorganizer.navigation.AppUiState.Ready)?.userName ?: ""
+
     val tasks by tasksViewModel.tasks.collectAsState()
     val completedCount = tasks.count { it.isCompleted }
     val totalCount = tasks.size
 
+    val cwItems by classWorkViewModel.items.collectAsState()
+    val cwCompleted = cwItems.count { it.isCompleted }
+    val cwTotal = cwItems.size
+
     val items = listOf(
         DashboardItem("Tasks", "$completedCount", "of $totalCount done", Icons.Default.CheckCircle, AccentTasks),
-        DashboardItem("Classes/Work", "0", "of 0 done", Icons.Default.Work, AccentClassesWork),
+        DashboardItem("Classes/Work", "$cwCompleted", "of $cwTotal done", Icons.Default.Work, AccentClassesWork),
         DashboardItem("Reminders", "0", "Upcoming", Icons.Default.Notifications, AccentReminders),
         DashboardItem("Appointments", "0", "Today", Icons.Default.Event, AccentAppointments),
         DashboardItem("Notes", "0", "Notes", Icons.Default.Description, AccentNotes),
@@ -70,7 +75,7 @@ fun DashboardScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Good Morning,\n${userName?.takeIf { it.isNotBlank() } ?: "there"} 👋",
+                text = "Good Morning,\n${userName.takeIf { it.isNotBlank() } ?: "there"} 👋",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
@@ -102,9 +107,12 @@ fun DashboardScreen(
                 DashboardCard(
                     item = item,
                     onClick = {
-                        if (item.title == "Tasks") {
-                            navController.navigate(com.kushal.personalorganizer.navigation.NavRoutes.Tasks.route)
+                        val route = when (item.title) {
+                            "Tasks" -> com.kushal.personalorganizer.navigation.NavRoutes.Tasks.route
+                            "Classes/Work" -> com.kushal.personalorganizer.navigation.NavRoutes.ClassesWork.route
+                            else -> null
                         }
+                        route?.let { navController.navigate(it) }
                     }
                 )
             }

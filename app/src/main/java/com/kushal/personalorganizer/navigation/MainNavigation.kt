@@ -1,21 +1,21 @@
 package com.kushal.personalorganizer.navigation
 
-import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
+import com.kushal.personalorganizer.feature.classeswork.ClassWorkScreen
 import com.kushal.personalorganizer.feature.dashboard.CalendarScreen
 import com.kushal.personalorganizer.feature.dashboard.DashboardScreen
 import com.kushal.personalorganizer.feature.dashboard.MoreScreen
@@ -42,7 +42,7 @@ fun MainNavigation() {
     val navController = rememberNavController()
 
     Scaffold(
-        containerColor = androidx.compose.ui.graphics.Color(0xFF121212),
+        containerColor = Color(0xFF121212),
         bottomBar = {
             NavigationBar(containerColor = CardBackground) {
                 val currentEntry by navController.currentBackStackEntryAsState()
@@ -81,6 +81,7 @@ fun MainNavigation() {
         ) {
             composable(NavRoutes.Dashboard.route) { DashboardScreen(navController = navController) }
             composable(NavRoutes.Tasks.route) { TasksScreen(onBack = { navController.popBackStack() }) }
+            composable(NavRoutes.ClassesWork.route) { ClassWorkScreen(onBack = { navController.popBackStack() }) }
             composable(NavRoutes.Calendar.route) { CalendarScreen() }
             composable(NavRoutes.Stats.route) { StatsScreen() }
             composable(NavRoutes.More.route) { MoreScreen() }
